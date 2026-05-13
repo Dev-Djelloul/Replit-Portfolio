@@ -1,8 +1,10 @@
 import { Link, useLocation } from "wouter";
-import { Briefcase, Home } from "lucide-react";
+import { Briefcase, Home, Mail } from "lucide-react";
+import { useLang } from "@/lib/i18n";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
+  const { t, lang, setLang } = useLang();
 
   return (
     <div className="min-h-[100dvh] flex flex-col relative w-full overflow-x-hidden selection:bg-primary selection:text-primary-foreground">
@@ -12,7 +14,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <header className="fixed top-0 w-full z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="font-mono font-bold tracking-tight text-lg text-primary hover:text-primary/80 transition-colors" data-testid="link-home-logo">
-            DK_
+            DJ_
           </Link>
           
           <nav className="flex items-center gap-6">
@@ -22,7 +24,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               data-testid="link-nav-home"
             >
               <Home className="w-4 h-4" />
-              <span className="hidden sm:inline-block">Home</span>
+              <span className="hidden sm:inline-block">{t("nav.home")}</span>
             </Link>
             <Link 
               href="/projects" 
@@ -30,8 +32,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
               data-testid="link-nav-projects"
             >
               <Briefcase className="w-4 h-4" />
-              <span className="hidden sm:inline-block">Work</span>
+              <span className="hidden sm:inline-block">{t("nav.work")}</span>
             </Link>
+            <Link 
+              href="/contact" 
+              className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-2 ${location.startsWith('/contact') ? 'text-foreground' : 'text-muted-foreground'}`}
+              data-testid="link-nav-contact"
+            >
+              <Mail className="w-4 h-4" />
+              <span className="hidden sm:inline-block">{t("nav.contact")}</span>
+            </Link>
+            <button
+              onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
+              className="px-2.5 py-1 text-xs font-mono font-medium rounded border border-primary/50 text-primary hover:bg-primary/10 transition-colors"
+              data-testid="btn-lang-toggle"
+            >
+              {t("nav.lang_toggle")}
+            </button>
           </nav>
         </div>
       </header>
@@ -43,11 +60,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-border/40 py-8 mt-auto">
         <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm font-mono">
-            © {new Date().getFullYear()} DK_ PORTFOLIO. ALL RIGHTS RESERVED.
+            © 2026 DJ_ PORTFOLIO. TOUS DROITS RÉSERVÉS.
           </p>
           <div className="flex items-center gap-4 text-sm text-muted-foreground font-mono">
             <span className="text-primary">///</span>
-            <span>SYSTEM ONLINE</span>
+            <span>{t("footer.status")}</span>
           </div>
         </div>
       </footer>

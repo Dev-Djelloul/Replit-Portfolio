@@ -5,8 +5,10 @@ import { ArrowRight, Terminal, BarChart, Code2 } from "lucide-react";
 import { ProjectCard } from "@/components/project-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { useLang } from "@/lib/i18n";
 
 export default function Home() {
+  const { t } = useLang();
   const { data: projects, isLoading: projectsLoading } = useListProjects({}, { 
     query: { queryKey: getListProjectsQueryKey() } 
   });
@@ -33,23 +35,23 @@ export default function Home() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
               </span>
-              AVAILABLE FOR NEW PROJECTS
+              {t("hero.badge")}
             </div>
             
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-8" data-testid="text-hero-headline">
-              DIGITAL <br />
-              MARKETING <span className="text-primary">&&</span> <br />
-              DEVELOPMENT.
+              {t("hero.headline_line1")} <br />
+              {t("hero.headline_line2")} <span className="text-primary">&&</span> <br />
+              {t("hero.headline_line3")}
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl font-light leading-relaxed mb-12" data-testid="text-hero-subheadline">
-              I build precise, high-performance web experiences and drive growth through calculated digital strategy. Specializing in Web Design, Google Ads, and Meta Campaigns.
+              {t("hero.subheadline")}
             </p>
             
             <div className="flex flex-wrap gap-4">
               <Button asChild size="lg" className="font-mono font-bold tracking-tight rounded-none h-14 px-8 text-primary-foreground" data-testid="link-hero-cta">
                 <Link href="/projects">
-                  VIEW ARCHIVE <ArrowRight className="ml-2 w-4 h-4" />
+                  {t("hero.cta")} <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
               </Button>
             </div>
@@ -73,7 +75,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col gap-2 p-6 border-l-2 border-primary" data-testid="card-stat-total">
               <div className="text-muted-foreground font-mono text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-primary" /> Total Projects
+                <Terminal className="w-4 h-4 text-primary" /> {t("stats.total")}
               </div>
               <div className="text-5xl font-black tracking-tighter">
                 {statsLoading ? <Skeleton className="h-12 w-24 bg-card" /> : stats?.total || 0}
@@ -82,7 +84,7 @@ export default function Home() {
             
             <div className="flex flex-col gap-2 p-6 border-l-2 border-border" data-testid="card-stat-dev">
               <div className="text-muted-foreground font-mono text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
-                <Code2 className="w-4 h-4 text-primary" /> Web & WordPress
+                <Code2 className="w-4 h-4 text-primary" /> {t("stats.web")}
               </div>
               <div className="text-4xl font-bold tracking-tight">
                 {statsLoading ? (
@@ -95,7 +97,7 @@ export default function Home() {
 
             <div className="flex flex-col gap-2 p-6 border-l-2 border-border" data-testid="card-stat-marketing">
               <div className="text-muted-foreground font-mono text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
-                <BarChart className="w-4 h-4 text-primary" /> Campaigns
+                <BarChart className="w-4 h-4 text-primary" /> {t("stats.campaigns")}
               </div>
               <div className="text-4xl font-bold tracking-tight">
                 {statsLoading ? (
@@ -114,12 +116,12 @@ export default function Home() {
         <div className="container mx-auto max-w-6xl">
           <div className="flex items-end justify-between mb-16">
             <div>
-              <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4" data-testid="text-featured-title">FEATURED_WORK</h2>
-              <p className="text-muted-foreground font-mono text-sm max-w-md">Selected projects spanning web development, design, and paid media campaigns.</p>
+              <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4" data-testid="text-featured-title">{t("featured.title")}</h2>
+              <p className="text-muted-foreground font-mono text-sm max-w-md">{t("featured.subtitle")}</p>
             </div>
             <Button asChild variant="outline" className="hidden md:flex font-mono rounded-none" data-testid="link-view-all-projects">
               <Link href="/projects">
-                ALL_PROJECTS <ArrowRight className="ml-2 w-4 h-4" />
+                {t("featured.all")} <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
             </Button>
           </div>
@@ -145,7 +147,7 @@ export default function Home() {
           <div className="mt-12 text-center md:hidden">
             <Button asChild variant="outline" className="w-full font-mono rounded-none">
               <Link href="/projects">
-                ALL_PROJECTS <ArrowRight className="ml-2 w-4 h-4" />
+                {t("featured.all")} <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
             </Button>
           </div>
