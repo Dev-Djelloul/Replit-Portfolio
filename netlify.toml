@@ -1,0 +1,12 @@
+[build]
+  command = "pnpm run build:netlify"
+  publish = "artifacts/portfolio/dist/public"
+
+[build.environment]
+  BASE_PATH = "/"
+  PORT = "5173"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
