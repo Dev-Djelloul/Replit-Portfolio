@@ -5,9 +5,6 @@
  * Portfolio API - fetches projects from Notion
  * OpenAPI spec version: 0.1.0
  */
-export interface HealthStatus {
-  status: string;
-}
 
 export interface Project {
   id: string;
@@ -23,38 +20,7 @@ export interface Project {
   coverUrl?: string | null;
   /** @nullable */
   notionUrl?: string | null;
-  createdAt: string;
+  createdAt: Date;
   /** @nullable */
   updatedAt?: string | null;
 }
-
-export interface CategoryCount {
-  category: string;
-  count: number;
-}
-
-export interface StatusCount {
-  status: string;
-  count: number;
-}
-
-export interface ProjectStats {
-  total: number;
-  byCategory: CategoryCount[];
-  byStatus: StatusCount[];
-}
-
-export interface ErrorResponse {
-  error: string;
-}
-
-export type ListProjectsParams = {
-  /**
-   * Filter by category/type
-   */
-  category?: string;
-  /**
-   * Search projects by title
-   */
-  search?: string;
-};
