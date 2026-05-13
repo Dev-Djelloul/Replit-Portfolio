@@ -7,6 +7,8 @@
  */
 
 export * from "./categoryCount";
+export * from "./contactRequest";
+export * from "./contactResponse";
 export * from "./errorResponse";
 export * from "./healthStatus";
 export * from "./listProjectsParams";

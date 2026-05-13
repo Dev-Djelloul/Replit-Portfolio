@@ -61,6 +61,22 @@ export const GetProjectStatsResponse = zod.object({
 });
 
 /**
+ * Sends a contact email to the portfolio owner
+ * @summary Send a contact message
+ */
+export const SendContactMessageBody = zod.object({
+  name: zod.string(),
+  email: zod.string().email(),
+  subject: zod.string().nullish(),
+  message: zod.string(),
+});
+
+export const SendContactMessageResponse = zod.object({
+  success: zod.boolean(),
+  message: zod.string(),
+});
+
+/**
  * Returns full details of a project by its Notion page ID
  * @summary Get a single project
  */

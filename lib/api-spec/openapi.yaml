@@ -67,6 +67,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProjectStats"
+  /contact:
+    post:
+      operationId: sendContactMessage
+      tags: [contact]
+      summary: Send a contact message
+      description: Sends a contact email to the portfolio owner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactRequest"
+      responses:
+        "200":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /projects/{id}:
     get:
       operationId: getProject
@@ -172,6 +203,32 @@ components:
           type: string
         count:
           type: integer
+    ContactRequest:
+      type: object
+      required:
+        - name
+        - email
+        - message
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        subject:
+          type: ["string", "null"]
+        message:
+          type: string
+    ContactResponse:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
     ErrorResponse:
       type: object
       required:

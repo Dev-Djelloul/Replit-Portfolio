@@ -44,6 +44,19 @@ export interface ProjectStats {
   byStatus: StatusCount[];
 }
 
+export interface ContactRequest {
+  name: string;
+  email: string;
+  /** @nullable */
+  subject?: string | null;
+  message: string;
+}
+
+export interface ContactResponse {
+  success: boolean;
+  message: string;
+}
+
 export interface ErrorResponse {
   error: string;
 }
