@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Filter, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/lib/i18n";
+import { fallbackProjects, filterProjects, getProjectStats } from "@/data/projects";
 
 export default function Projects() {
   const { t } = useLang();
@@ -21,8 +22,15 @@ export default function Projects() {
     query: { queryKey: getGetProjectStatsQueryKey() }
   });
 
-  const projectList = Array.isArray(projects) ? projects : [];
-  const categoryStats = Array.isArray(stats?.byCategory) ? stats.byCategory : [];
+  const projectList =
+    Array.isArray(projects) && projects.length > 0
+      ? projects
+      : filterProjects(fallbackProjects, { search: search || undefined, category });
+  const resolvedStats =
+    stats && Array.isArray(stats.byCategory) && stats.total > 0
+      ? stats
+      : getProjectStats(fallbackProjects);
+  const categoryStats = resolvedStats.byCategory;
   const categories = categoryStats.map(c => c.category);
 
   return (

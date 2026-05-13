@@ -6,6 +6,7 @@ import { ProjectCard } from "@/components/project-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n";
+import { fallbackProjects, getProjectStats } from "@/data/projects";
 
 export default function Home() {
   const { t } = useLang();
@@ -17,10 +18,14 @@ export default function Home() {
     query: { queryKey: getGetProjectStatsQueryKey() } 
   });
 
-  const projectList = Array.isArray(projects) ? projects : [];
-  const categoryStats = Array.isArray(stats?.byCategory) ? stats.byCategory : [];
+  const projectList = Array.isArray(projects) && projects.length > 0 ? projects : fallbackProjects;
+  const resolvedStats =
+    stats && Array.isArray(stats.byCategory) && stats.total > 0
+      ? stats
+      : getProjectStats(projectList);
+  const categoryStats = resolvedStats.byCategory;
   const featuredProjects = projectList.slice(0, 6);
-  const totalProjects = typeof stats?.total === "number" ? stats.total : projectList.length;
+  const totalProjects = resolvedStats.total;
   const webProjectCount = categoryStats
     .filter((c) => c.category.toLowerCase().includes("web") || c.category.toLowerCase().includes("wordpress"))
     .reduce((sum, c) => sum + c.count, 0);
