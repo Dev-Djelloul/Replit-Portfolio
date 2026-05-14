@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { Project } from "@workspace/api-client-react";
 
 export function ProjectCard({ project, index }: { project: Project; index: number }) {
@@ -17,20 +17,14 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
       </Link>
 
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-secondary/50">
-        {project.coverUrl ? (
-          <img 
-            src={project.coverUrl} 
-            alt={project.title} 
-            className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
-            data-testid={`img-project-cover-${project.id}`}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary to-background p-6">
-            <span className="text-4xl font-black text-muted-foreground/30 font-mono tracking-tighter uppercase text-center break-words overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
-              {project.category}
-            </span>
-          </div>
-        )}
+        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary to-background p-6">
+          <span
+            className="text-4xl font-black text-muted-foreground/30 font-mono tracking-tighter uppercase text-center break-words overflow-hidden"
+            style={{ display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical" }}
+          >
+            {project.category}
+          </span>
+        </div>
         <div className="absolute inset-0 bg-background/10 group-hover:bg-transparent transition-colors duration-300" />
       </div>
 

@@ -6,7 +6,7 @@ import { ProjectCard } from "@/components/project-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n";
-import { fallbackProjects, getProjectStats } from "@/data/projects";
+import { fallbackProjects, getProjectStats, sortProjectsByLatest } from "@/data/projects";
 
 export default function Home() {
   const { t } = useLang();
@@ -18,7 +18,9 @@ export default function Home() {
     query: { queryKey: getGetProjectStatsQueryKey() } 
   });
 
-  const projectList = Array.isArray(projects) && projects.length > 0 ? projects : fallbackProjects;
+  const projectList = sortProjectsByLatest(
+    Array.isArray(projects) && projects.length > 0 ? projects : fallbackProjects
+  );
   const resolvedStats =
     stats && Array.isArray(stats.byCategory) && stats.total > 0
       ? stats

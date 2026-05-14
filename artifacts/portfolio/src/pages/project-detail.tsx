@@ -201,22 +201,13 @@ export default function ProjectDetail() {
         )}
       </AnimatePresence>
 
-      {/* Cover Image Header */}
+      {/* Project Header Visual */}
       <div className="w-full h-[40vh] md:h-[60vh] relative bg-secondary overflow-hidden border-b border-border">
-        {displayedProject.coverUrl ? (
-          <img 
-            src={displayedProject.coverUrl} 
-            alt={displayedProject.title} 
-            className="w-full h-full object-cover opacity-80"
-            data-testid={`img-detail-cover-${displayedProject.id}`}
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-secondary via-background to-primary/10 flex items-center justify-center">
-            <span className="text-6xl md:text-9xl font-black text-muted-foreground/10 font-mono tracking-tighter uppercase whitespace-nowrap overflow-hidden">
-              {displayedProject.category}
-            </span>
-          </div>
-        )}
+        <div className="w-full h-full bg-gradient-to-br from-secondary via-background to-primary/10 flex items-center justify-center">
+          <span className="text-6xl md:text-9xl font-black text-muted-foreground/10 font-mono tracking-tighter uppercase whitespace-nowrap overflow-hidden">
+            {displayedProject.category}
+          </span>
+        </div>
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         
         <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">

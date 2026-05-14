@@ -138,6 +138,32 @@ export function filterProjects(projects: Project[], params: ListProjectsParams =
   });
 }
 
+export function getProjectNumber(project: Pick<Project, "id" | "title">): number | null {
+  const numbers = [
+    ...Array.from(project.title.matchAll(/\d+/g), (match) => Number(match[0])),
+    ...Array.from(project.id.matchAll(/^projet-(\d+(?:-\d+)*)/g), (match) =>
+      match[1].split("-").map(Number)
+    ).flat(),
+  ].filter((value) => Number.isFinite(value) && value > 0 && value < 100);
+
+  return numbers.length > 0 ? Math.max(...numbers) : null;
+}
+
+export function sortProjectsByLatest(projects: Project[]): Project[] {
+  return [...projects].sort((a, b) => {
+    const aNumber = getProjectNumber(a);
+    const bNumber = getProjectNumber(b);
+
+    if (aNumber !== null || bNumber !== null) {
+      return (bNumber ?? -1) - (aNumber ?? -1);
+    }
+
+    const aTime = new Date(a.updatedAt ?? a.createdAt).getTime();
+    const bTime = new Date(b.updatedAt ?? b.createdAt).getTime();
+    return bTime - aTime || a.title.localeCompare(b.title);
+  });
+}
+
 export function getProjectStats(projects: Project[]): ProjectStats {
   return {
     total: projects.length,
