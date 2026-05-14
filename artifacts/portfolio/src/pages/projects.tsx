@@ -35,35 +35,30 @@ export default function Projects() {
   const categories = categoryStats.map(c => c.category);
 
   return (
-    <div className="flex flex-col w-full min-h-[calc(100vh-8rem)] pt-12 pb-24 px-4 md:px-8">
-      <div className="container mx-auto max-w-6xl">
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-4" data-testid="text-projects-title">{t("archive.title")}</h1>
-          <p className="text-muted-foreground font-mono">{t("archive.subtitle")}</p>
-        </div>
-
+    <div className="flex flex-col w-full min-h-[calc(100vh-8rem)] pb-24 px-4 md:px-8">
+      <div className="container mx-auto max-w-[112rem]">
         {/* Filters & Search */}
-        <div className="flex flex-col md:flex-row gap-4 mb-12 items-start md:items-center justify-between p-4 bg-secondary/30 border border-border/50 rounded-lg">
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <div className="flex flex-col xl:flex-row gap-5 mb-20 items-start xl:items-center justify-between p-6 bg-secondary/20 border border-border/50 rounded-xl">
+          <div className="relative w-full xl:w-[430px] shrink-0">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input 
               type="text" 
               placeholder={t("archive.search_placeholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 font-mono bg-background border-border/50 focus-visible:ring-primary rounded-none"
+              className="h-14 pl-12 text-base font-mono bg-background border-border/50 focus-visible:ring-primary rounded-none"
               data-testid="input-search-projects"
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground font-mono mr-2">
-              <Filter className="w-4 h-4" /> {t("archive.filters")}
+          <div className="flex w-full min-w-0 flex-wrap items-center gap-3 xl:flex-1">
+            <div className="flex items-center gap-2 text-base text-muted-foreground font-mono mr-2">
+              <Filter className="w-5 h-5" /> {t("archive.filters")}
             </div>
             
             <button
               onClick={() => setCategory(undefined)}
-              className={`px-3 py-1.5 text-xs font-mono font-medium transition-colors border ${!category ? 'bg-primary text-primary-foreground border-primary' : 'bg-background text-muted-foreground border-border hover:border-primary/50'}`}
+              className={`h-11 px-5 text-sm font-mono font-medium transition-colors border ${!category ? 'bg-primary text-primary-foreground border-primary' : 'bg-background text-muted-foreground border-border hover:border-primary/50'}`}
               data-testid="btn-filter-all"
             >
               {t("archive.all")}
@@ -73,7 +68,7 @@ export default function Projects() {
               <button
                 key={c}
                 onClick={() => setCategory(c)}
-                className={`px-3 py-1.5 text-xs font-mono font-medium transition-colors border ${category === c ? 'bg-primary text-primary-foreground border-primary' : 'bg-background text-muted-foreground border-border hover:border-primary/50'}`}
+                className={`h-11 px-5 text-sm font-mono font-medium transition-colors border ${category === c ? 'bg-primary text-primary-foreground border-primary' : 'bg-background text-muted-foreground border-border hover:border-primary/50'}`}
                 data-testid={`btn-filter-${c}`}
               >
                 {c.toUpperCase()}
@@ -85,14 +80,14 @@ export default function Projects() {
         {/* Projects Grid */}
         <div className="min-h-[500px]">
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-[400px] rounded-xl bg-card border border-border/50 animate-pulse" />
+                <div key={i} className="h-[660px] rounded-xl bg-card border border-border/50 animate-pulse" />
               ))}
             </div>
           ) : projectList.length > 0 ? (
             <motion.div 
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
               layout
             >
               <AnimatePresence>
