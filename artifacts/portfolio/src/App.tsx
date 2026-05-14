@@ -25,6 +25,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/admin" component={Admin} />
+      <Route path="/admin/" component={Admin} />
       <Route>
         <Layout>
           <Switch>

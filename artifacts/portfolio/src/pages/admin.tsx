@@ -182,7 +182,7 @@ export default function Admin() {
   const { data: projects = [], isLoading } = useListProjects({}, { query: { enabled: authenticated, queryKey: getListProjectsQueryKey({}) } });
 
   const handleLogin = () => {
-    if (password === ADMIN_PASSWORD) {
+    if (password.trim() === ADMIN_PASSWORD) {
       setAuthenticated(true);
       setError("");
     } else {
