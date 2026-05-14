@@ -327,7 +327,7 @@ export async function customFetch<T = unknown>(
   options: CustomFetchOptions = {},
 ): Promise<T> {
   input = applyBaseUrl(input);
-  const { responseType = "auto", headers: headersInit, ...init } = options;
+  const { responseType = "json", headers: headersInit, ...init } = options;
 
   const method = resolveMethod(input, init.method);
 
@@ -345,7 +345,7 @@ export async function customFetch<T = unknown>(
     headers.set("content-type", "application/json");
   }
 
-  if (responseType === "json" && !headers.has("accept")) {
+  if ((responseType === "json" || responseType === "auto") && !headers.has("accept")) {
     headers.set("accept", DEFAULT_JSON_ACCEPT);
   }
 

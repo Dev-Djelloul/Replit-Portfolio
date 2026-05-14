@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Filter, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/lib/i18n";
+import { fallbackProjects, filterProjects, getProjectStats } from "@/data/projects";
 
 export default function Projects() {
   const { t } = useLang();
@@ -21,7 +22,16 @@ export default function Projects() {
     query: { queryKey: getGetProjectStatsQueryKey() }
   });
 
-  const categories = stats?.byCategory.map(c => c.category) || [];
+  const projectList =
+    Array.isArray(projects) && projects.length > 0
+      ? projects
+      : filterProjects(fallbackProjects, { search: search || undefined, category });
+  const resolvedStats =
+    stats && Array.isArray(stats.byCategory) && stats.total > 0
+      ? stats
+      : getProjectStats(fallbackProjects);
+  const categoryStats = resolvedStats.byCategory;
+  const categories = categoryStats.map(c => c.category);
 
   return (
     <div className="flex flex-col w-full min-h-[calc(100vh-8rem)] pt-12 pb-24 px-4 md:px-8">
@@ -79,13 +89,13 @@ export default function Projects() {
                 <div key={i} className="h-[400px] rounded-xl bg-card border border-border/50 animate-pulse" />
               ))}
             </div>
-          ) : projects && projects.length > 0 ? (
+          ) : projectList.length > 0 ? (
             <motion.div 
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               layout
             >
               <AnimatePresence>
-                {projects.map((project, i) => (
+                {projectList.map((project, i) => (
                   <ProjectCard key={project.id} project={project} index={i} />
                 ))}
               </AnimatePresence>

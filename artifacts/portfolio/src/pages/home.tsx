@@ -6,6 +6,7 @@ import { ProjectCard } from "@/components/project-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n";
+import { fallbackProjects, getProjectStats } from "@/data/projects";
 
 export default function Home() {
   const { t } = useLang();
@@ -17,7 +18,20 @@ export default function Home() {
     query: { queryKey: getGetProjectStatsQueryKey() } 
   });
 
-  const featuredProjects = projects?.slice(0, 6) || [];
+  const projectList = Array.isArray(projects) && projects.length > 0 ? projects : fallbackProjects;
+  const resolvedStats =
+    stats && Array.isArray(stats.byCategory) && stats.total > 0
+      ? stats
+      : getProjectStats(projectList);
+  const categoryStats = resolvedStats.byCategory;
+  const featuredProjects = projectList.slice(0, 6);
+  const totalProjects = resolvedStats.total;
+  const webProjectCount = categoryStats
+    .filter((c) => c.category.toLowerCase().includes("web") || c.category.toLowerCase().includes("wordpress"))
+    .reduce((sum, c) => sum + c.count, 0);
+  const campaignCount = categoryStats
+    .filter((c) => c.category.toLowerCase().includes("ads") || c.category.toLowerCase().includes("marketing"))
+    .reduce((sum, c) => sum + c.count, 0);
 
   return (
     <div className="flex flex-col w-full min-h-[calc(100vh-8rem)]">
@@ -78,7 +92,7 @@ export default function Home() {
                 <Terminal className="w-4 h-4 text-primary" /> {t("stats.total")}
               </div>
               <div className="text-5xl font-black tracking-tighter">
-                {statsLoading ? <Skeleton className="h-12 w-24 bg-card" /> : stats?.total || 0}
+                {statsLoading ? <Skeleton className="h-12 w-24 bg-card" /> : totalProjects}
               </div>
             </div>
             
@@ -90,7 +104,7 @@ export default function Home() {
                 {statsLoading ? (
                   <Skeleton className="h-10 w-16 bg-card" />
                 ) : (
-                  stats?.byCategory.filter(c => c.category.toLowerCase().includes('web') || c.category.toLowerCase().includes('wordpress')).reduce((sum, c) => sum + c.count, 0) || 0
+                  webProjectCount
                 )}
               </div>
             </div>
@@ -103,7 +117,7 @@ export default function Home() {
                 {statsLoading ? (
                   <Skeleton className="h-10 w-16 bg-card" />
                 ) : (
-                  stats?.byCategory.filter(c => c.category.toLowerCase().includes('ads') || c.category.toLowerCase().includes('marketing')).reduce((sum, c) => sum + c.count, 0) || 0
+                  campaignCount
                 )}
               </div>
             </div>
