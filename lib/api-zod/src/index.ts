@@ -1,2 +1,14 @@
 export * from "./generated/api";
-export * from "./generated/types";
+export type {
+  Project,
+  ProjectStats,
+  CategoryCount,
+  StatusCount,
+  HealthStatus,
+  ErrorResponse,
+  ListProjectsParams,
+  ContactRequest,
+  ContactResponse,
+  ProjectMedia,
+  DeleteProjectMedia200,
+} from "./generated/types";

@@ -17,13 +17,18 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  AddProjectMediaBody,
   ContactRequest,
   ContactResponse,
+  DeleteProjectMedia200,
   ErrorResponse,
   HealthStatus,
   ListProjectsParams,
   Project,
+  ProjectMedia,
   ProjectStats,
+  RequestUploadUrlBody,
+  RequestUploadUrlResponse,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -367,6 +372,359 @@ export const useSendContactMessage = <
   TContext
 > => {
   return useMutation(getSendContactMessageMutationOptions(options));
+};
+
+/**
+ * @summary Request a presigned upload URL
+ */
+export const getRequestUploadUrlUrl = () => {
+  return `/api/storage/uploads/request-url`;
+};
+
+export const requestUploadUrl = async (
+  requestUploadUrlBody: RequestUploadUrlBody,
+  options?: RequestInit,
+): Promise<RequestUploadUrlResponse> => {
+  return customFetch<RequestUploadUrlResponse>(getRequestUploadUrlUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(requestUploadUrlBody),
+  });
+};
+
+export const getRequestUploadUrlMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof requestUploadUrl>>,
+    TError,
+    { data: BodyType<RequestUploadUrlBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof requestUploadUrl>>,
+  TError,
+  { data: BodyType<RequestUploadUrlBody> },
+  TContext
+> => {
+  const mutationKey = ["requestUploadUrl"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof requestUploadUrl>>,
+    { data: BodyType<RequestUploadUrlBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return requestUploadUrl(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RequestUploadUrlMutationResult = NonNullable<
+  Awaited<ReturnType<typeof requestUploadUrl>>
+>;
+export type RequestUploadUrlMutationBody = BodyType<RequestUploadUrlBody>;
+export type RequestUploadUrlMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Request a presigned upload URL
+ */
+export const useRequestUploadUrl = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof requestUploadUrl>>,
+    TError,
+    { data: BodyType<RequestUploadUrlBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof requestUploadUrl>>,
+  TError,
+  { data: BodyType<RequestUploadUrlBody> },
+  TContext
+> => {
+  return useMutation(getRequestUploadUrlMutationOptions(options));
+};
+
+/**
+ * @summary List media for a project
+ */
+export const getListProjectMediaUrl = (projectId: string) => {
+  return `/api/media/${projectId}`;
+};
+
+export const listProjectMedia = async (
+  projectId: string,
+  options?: RequestInit,
+): Promise<ProjectMedia[]> => {
+  return customFetch<ProjectMedia[]>(getListProjectMediaUrl(projectId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListProjectMediaQueryKey = (projectId: string) => {
+  return [`/api/media/${projectId}`] as const;
+};
+
+export const getListProjectMediaQueryOptions = <
+  TData = Awaited<ReturnType<typeof listProjectMedia>>,
+  TError = ErrorType<unknown>,
+>(
+  projectId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listProjectMedia>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListProjectMediaQueryKey(projectId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listProjectMedia>>
+  > = ({ signal }) =>
+    listProjectMedia(projectId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!projectId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof listProjectMedia>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListProjectMediaQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listProjectMedia>>
+>;
+export type ListProjectMediaQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List media for a project
+ */
+
+export function useListProjectMedia<
+  TData = Awaited<ReturnType<typeof listProjectMedia>>,
+  TError = ErrorType<unknown>,
+>(
+  projectId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listProjectMedia>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListProjectMediaQueryOptions(projectId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Add a media item to a project
+ */
+export const getAddProjectMediaUrl = (projectId: string) => {
+  return `/api/media/${projectId}`;
+};
+
+export const addProjectMedia = async (
+  projectId: string,
+  addProjectMediaBody: AddProjectMediaBody,
+  options?: RequestInit,
+): Promise<ProjectMedia> => {
+  return customFetch<ProjectMedia>(getAddProjectMediaUrl(projectId), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(addProjectMediaBody),
+  });
+};
+
+export const getAddProjectMediaMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addProjectMedia>>,
+    TError,
+    { projectId: string; data: BodyType<AddProjectMediaBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addProjectMedia>>,
+  TError,
+  { projectId: string; data: BodyType<AddProjectMediaBody> },
+  TContext
+> => {
+  const mutationKey = ["addProjectMedia"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addProjectMedia>>,
+    { projectId: string; data: BodyType<AddProjectMediaBody> }
+  > = (props) => {
+    const { projectId, data } = props ?? {};
+
+    return addProjectMedia(projectId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AddProjectMediaMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addProjectMedia>>
+>;
+export type AddProjectMediaMutationBody = BodyType<AddProjectMediaBody>;
+export type AddProjectMediaMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Add a media item to a project
+ */
+export const useAddProjectMedia = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addProjectMedia>>,
+    TError,
+    { projectId: string; data: BodyType<AddProjectMediaBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof addProjectMedia>>,
+  TError,
+  { projectId: string; data: BodyType<AddProjectMediaBody> },
+  TContext
+> => {
+  return useMutation(getAddProjectMediaMutationOptions(options));
+};
+
+/**
+ * @summary Delete a media item
+ */
+export const getDeleteProjectMediaUrl = (
+  projectId: string,
+  mediaId: number,
+) => {
+  return `/api/media/${projectId}/${mediaId}`;
+};
+
+export const deleteProjectMedia = async (
+  projectId: string,
+  mediaId: number,
+  options?: RequestInit,
+): Promise<DeleteProjectMedia200> => {
+  return customFetch<DeleteProjectMedia200>(
+    getDeleteProjectMediaUrl(projectId, mediaId),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+export const getDeleteProjectMediaMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteProjectMedia>>,
+    TError,
+    { projectId: string; mediaId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteProjectMedia>>,
+  TError,
+  { projectId: string; mediaId: number },
+  TContext
+> => {
+  const mutationKey = ["deleteProjectMedia"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteProjectMedia>>,
+    { projectId: string; mediaId: number }
+  > = (props) => {
+    const { projectId, mediaId } = props ?? {};
+
+    return deleteProjectMedia(projectId, mediaId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteProjectMediaMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteProjectMedia>>
+>;
+
+export type DeleteProjectMediaMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Delete a media item
+ */
+export const useDeleteProjectMedia = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteProjectMedia>>,
+    TError,
+    { projectId: string; mediaId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteProjectMedia>>,
+  TError,
+  { projectId: string; mediaId: number },
+  TContext
+> => {
+  return useMutation(getDeleteProjectMediaMutationOptions(options));
 };
 
 /**

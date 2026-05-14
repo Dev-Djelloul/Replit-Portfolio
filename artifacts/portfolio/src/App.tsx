@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import Projects from "@/pages/projects";
 import ProjectDetail from "@/pages/project-detail";
 import Contact from "@/pages/contact";
+import Admin from "@/pages/admin";
 import { Layout } from "@/components/layout";
 
 const queryClient = new QueryClient({
@@ -21,15 +22,20 @@ const queryClient = new QueryClient({
 
 function Router() {
   return (
-    <Layout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/projects" component={Projects} />
-        <Route path="/projects/:id" component={ProjectDetail} />
-        <Route path="/contact" component={Contact} />
-        <Route component={NotFound} />
-      </Switch>
-    </Layout>
+    <Switch>
+      <Route path="/admin" component={Admin} />
+      <Route>
+        <Layout>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/projects" component={Projects} />
+            <Route path="/projects/:id" component={ProjectDetail} />
+            <Route path="/contact" component={Contact} />
+            <Route component={NotFound} />
+          </Switch>
+        </Layout>
+      </Route>
+    </Switch>
   );
 }
 

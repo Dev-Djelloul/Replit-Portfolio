@@ -6,12 +6,17 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./addProjectMediaBody";
 export * from "./categoryCount";
 export * from "./contactRequest";
 export * from "./contactResponse";
+export * from "./deleteProjectMedia200";
 export * from "./errorResponse";
 export * from "./healthStatus";
 export * from "./listProjectsParams";
 export * from "./project";
+export * from "./projectMedia";
 export * from "./projectStats";
+export * from "./requestUploadUrlBody";
+export * from "./requestUploadUrlResponse";
 export * from "./statusCount";

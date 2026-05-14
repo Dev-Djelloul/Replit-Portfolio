@@ -77,6 +77,66 @@ export const SendContactMessageResponse = zod.object({
 });
 
 /**
+ * @summary Request a presigned upload URL
+ */
+export const RequestUploadUrlBody = zod.object({
+  name: zod.string(),
+  size: zod.number(),
+  contentType: zod.string(),
+});
+
+export const RequestUploadUrlResponse = zod.object({
+  uploadURL: zod.string(),
+  objectPath: zod.string(),
+});
+
+/**
+ * @summary List media for a project
+ */
+export const ListProjectMediaParams = zod.object({
+  projectId: zod.coerce.string(),
+});
+
+export const ListProjectMediaResponseItem = zod.object({
+  id: zod.number(),
+  projectId: zod.string(),
+  objectPath: zod.string(),
+  fileName: zod.string(),
+  fileType: zod.string(),
+  mediaType: zod.string(),
+  displayOrder: zod.number(),
+  createdAt: zod.coerce.date(),
+});
+export const ListProjectMediaResponse = zod.array(ListProjectMediaResponseItem);
+
+/**
+ * @summary Add a media item to a project
+ */
+export const AddProjectMediaParams = zod.object({
+  projectId: zod.coerce.string(),
+});
+
+export const AddProjectMediaBody = zod.object({
+  objectPath: zod.string(),
+  fileName: zod.string(),
+  fileType: zod.string(),
+  mediaType: zod.string(),
+  displayOrder: zod.number().optional(),
+});
+
+/**
+ * @summary Delete a media item
+ */
+export const DeleteProjectMediaParams = zod.object({
+  projectId: zod.coerce.string(),
+  mediaId: zod.coerce.number(),
+});
+
+export const DeleteProjectMediaResponse = zod.object({
+  success: zod.boolean(),
+});
+
+/**
  * Returns full details of a project by its Notion page ID
  * @summary Get a single project
  */

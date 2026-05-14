@@ -61,6 +61,36 @@ export interface ErrorResponse {
   error: string;
 }
 
+export interface RequestUploadUrlBody {
+  name: string;
+  size: number;
+  contentType: string;
+}
+
+export interface RequestUploadUrlResponse {
+  uploadURL: string;
+  objectPath: string;
+}
+
+export interface ProjectMedia {
+  id: number;
+  projectId: string;
+  objectPath: string;
+  fileName: string;
+  fileType: string;
+  mediaType: string;
+  displayOrder: number;
+  createdAt: string;
+}
+
+export interface AddProjectMediaBody {
+  objectPath: string;
+  fileName: string;
+  fileType: string;
+  mediaType: string;
+  displayOrder?: number;
+}
+
 export type ListProjectsParams = {
   /**
    * Filter by category/type
@@ -70,4 +100,8 @@ export type ListProjectsParams = {
    * Search projects by title
    */
   search?: string;
+};
+
+export type DeleteProjectMedia200 = {
+  success: boolean;
 };
