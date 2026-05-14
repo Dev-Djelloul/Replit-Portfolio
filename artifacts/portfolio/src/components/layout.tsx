@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Briefcase, Home, Mail } from "lucide-react";
+import { Briefcase, Home, Mail, User } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -33,6 +33,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
             >
               <Briefcase className="w-4 h-4" />
               <span className="hidden sm:inline-block">{t("nav.work")}</span>
+            </Link>
+            <Link 
+              href="/about" 
+              className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-2 ${location.startsWith('/about') ? 'text-foreground' : 'text-muted-foreground'}`}
+              data-testid="link-nav-about"
+            >
+              <User className="w-4 h-4" />
+              <span className="hidden sm:inline-block">{t("nav.about")}</span>
             </Link>
             <Link 
               href="/contact" 
