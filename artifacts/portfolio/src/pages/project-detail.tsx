@@ -16,6 +16,28 @@ type LightboxImage = {
   name: string;
 };
 
+type ProjectMediaItem = {
+  id: number;
+  objectPath: string;
+  fileName: string;
+  fileType: string;
+  mediaType: string;
+};
+
+function isDocumentMedia(item: ProjectMediaItem) {
+  return (
+    item.mediaType === "document" ||
+    item.fileType.includes("pdf") ||
+    item.fileType.includes("document") ||
+    item.fileType.includes("presentation") ||
+    item.fileType.includes("spreadsheet")
+  );
+}
+
+function isImageMedia(item: ProjectMediaItem) {
+  return item.mediaType === "image" || item.fileType.startsWith("image/");
+}
+
 function Lightbox({
   images,
   initialIndex,
@@ -106,6 +128,7 @@ export default function ProjectDetail() {
   const params = useParams();
   const id = params.id as string;
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [failedImageIds, setFailedImageIds] = useState<Set<number>>(() => new Set());
 
   const { data: project, isLoading, isError } = useGetProject(id, {
     query: {
@@ -125,8 +148,8 @@ export default function ProjectDetail() {
   });
 
   const dateLocale = lang === 'fr' ? fr : enUS;
-  const imageMedia = media.filter((item) => item.mediaType === "image");
-  const docMedia = media.filter((item) => item.mediaType === "document");
+  const imageMedia = media.filter((item) => isImageMedia(item) && !failedImageIds.has(item.id));
+  const docMedia = media.filter((item) => isDocumentMedia(item) || failedImageIds.has(item.id));
   const lightboxImages = imageMedia.map((item) => ({
     url: `/api/storage${item.objectPath}`,
     name: item.fileName,
@@ -261,6 +284,9 @@ export default function ProjectDetail() {
                       src={`/api/storage${item.objectPath}`}
                       alt={item.fileName}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={() => {
+                        setFailedImageIds((current) => new Set(current).add(item.id));
+                      }}
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
                       <ZoomIn className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
