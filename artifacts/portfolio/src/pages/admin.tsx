@@ -3,11 +3,48 @@ import { useListProjects, getListProjectsQueryKey, useListProjectMedia, getListP
 import { useUpload } from "@workspace/object-storage-web";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Upload, FileText, ImageIcon, Loader2, Lock, Eye, EyeOff, ChevronDown, ChevronRight } from "lucide-react";
+import { Trash2, Upload, FileText, Loader2, Lock, Eye, EyeOff, ChevronDown, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ADMIN_PASSWORD = "djelloul2024";
+const documentExtensions = new Set(["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"]);
+
+function getFileExtension(fileName: string) {
+  return fileName.split(".").pop()?.toLowerCase() ?? "";
+}
+
+function getFallbackFileType(fileName: string, contentType?: string) {
+  if (contentType && contentType !== "application/octet-stream") {
+    return contentType;
+  }
+
+  const ext = getFileExtension(fileName);
+  if (ext === "pdf") return "application/pdf";
+  if (ext === "doc") return "application/msword";
+  if (ext === "docx") return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  if (ext === "ppt") return "application/vnd.ms-powerpoint";
+  if (ext === "pptx") return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+  if (ext === "xls") return "application/vnd.ms-excel";
+  if (ext === "xlsx") return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  if (["jpg", "jpeg"].includes(ext)) return "image/jpeg";
+  if (ext === "png") return "image/png";
+  if (ext === "webp") return "image/webp";
+  if (ext === "gif") return "image/gif";
+  return contentType || "application/octet-stream";
+}
+
+function getMediaType(fileName: string, fileType: string) {
+  if (fileType.startsWith("image/")) return "image";
+  if (fileType.startsWith("video/")) return "video";
+
+  const ext = getFileExtension(fileName);
+  if (documentExtensions.has(ext) || fileType.includes("pdf") || fileType.includes("document") || fileType.includes("presentation") || fileType.includes("spreadsheet")) {
+    return "document";
+  }
+
+  return "document";
+}
 
 function MediaItem({
   projectId,
@@ -20,14 +57,19 @@ function MediaItem({
 }) {
   const deleteMutation = useDeleteProjectMedia();
   const isImage = item.mediaType === "image";
-  const isDoc = item.mediaType === "document";
+  const [imageFailed, setImageFailed] = useState(false);
   const servingUrl = `/api/storage${item.objectPath}`;
 
   return (
     <div className="flex items-center gap-3 p-3 bg-secondary/30 border border-border/40 rounded group">
-      {isImage ? (
+      {isImage && !imageFailed ? (
         <a href={servingUrl} target="_blank" rel="noopener noreferrer" className="shrink-0">
-          <img src={servingUrl} alt={item.fileName} className="w-16 h-12 object-cover rounded border border-border/40 hover:opacity-80 transition-opacity" />
+          <img
+            src={servingUrl}
+            alt={item.fileName}
+            className="w-16 h-12 object-cover rounded border border-border/40 hover:opacity-80 transition-opacity"
+            onError={() => setImageFailed(true)}
+          />
         </a>
       ) : (
         <div className="w-16 h-12 flex items-center justify-center bg-card rounded border border-border/40 shrink-0">
@@ -69,16 +111,17 @@ function ProjectRow({ project }: { project: { id: string; title: string; categor
 
   const { uploadFile, isUploading, progress } = useUpload({
     onSuccess: async (res) => {
-      const ext = res.objectPath.split(".").pop()?.toLowerCase() || "";
-      const isDoc = ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"].includes(ext);
-      const mediaType = isDoc ? "document" : "image";
+      const fileName = res.metadata.name || res.objectPath.split("/").pop() || res.objectPath;
+      const fileType = getFallbackFileType(fileName, res.metadata.contentType);
+      const mediaType = getMediaType(fileName, fileType);
+
       addMedia.mutate(
         {
           projectId: project.id,
           data: {
             objectPath: res.objectPath,
-            fileName: res.objectPath.split("/").pop() || res.objectPath,
-            fileType: isDoc ? "application/pdf" : "image/png",
+            fileName,
+            fileType,
             mediaType,
             displayOrder: (media?.length ?? 0),
           },
