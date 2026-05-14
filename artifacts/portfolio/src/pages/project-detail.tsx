@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import { fr, enUS } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/lib/i18n";
-import { getFallbackProject } from "@/data/projects";
+import { getFallbackProject, getProjectDisplayTitle } from "@/data/projects";
 
 type LightboxImage = {
   url: string;
@@ -150,6 +150,7 @@ export default function ProjectDetail() {
   const dateLocale = lang === 'fr' ? fr : enUS;
   const imageMedia = media.filter((item) => isImageMedia(item) && !failedImageIds.has(item.id));
   const docMedia = media.filter((item) => isDocumentMedia(item) || failedImageIds.has(item.id));
+  const displayTitle = displayedProject ? getProjectDisplayTitle(displayedProject) : "";
   const lightboxImages = imageMedia.map((item) => ({
     url: `/api/storage${item.objectPath}`,
     name: item.fileName,
@@ -222,7 +223,7 @@ export default function ProjectDetail() {
               className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] mb-6"
               data-testid={`text-detail-title-${displayedProject.id}`}
             >
-              {displayedProject.title}
+              {displayTitle}
             </motion.h1>
             
             <motion.div 
@@ -258,6 +259,20 @@ export default function ProjectDetail() {
             </div>
           </section>
 
+          {displayedProject.tags && displayedProject.tags.length > 0 && (
+            <section>
+              <h2 className="text-xl font-bold font-mono tracking-tight mb-6 uppercase border-b border-border pb-2 text-primary">{t("detail.technologies")}</h2>
+              <div className="flex flex-wrap gap-3">
+                {displayedProject.tags.map(tag => (
+                  <span key={tag} className="flex items-center gap-1.5 px-3 py-1 bg-secondary text-secondary-foreground font-mono text-sm rounded border border-border/50" data-testid={`badge-detail-tag-${tag}`}>
+                    <Tag className="w-3 h-3 text-muted-foreground" />
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </section>
+          )}
+
           {imageMedia.length > 0 && (
             <section>
               <h2 className="text-xl font-bold font-mono tracking-tight mb-6 uppercase border-b border-border pb-2 text-primary">
@@ -283,48 +298,6 @@ export default function ProjectDetail() {
                       <ZoomIn className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </button>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {docMedia.length > 0 && (
-            <section>
-              <h2 className="text-xl font-bold font-mono tracking-tight mb-6 uppercase border-b border-border pb-2 text-primary">
-                {t("detail.documents")}
-              </h2>
-              <div className="flex flex-col gap-3">
-                {docMedia.map((item) => (
-                  <a
-                    key={item.id}
-                    href={`/api/storage${item.objectPath}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 p-4 rounded-lg border border-border/50 bg-card hover:border-primary/50 hover:bg-secondary/30 transition-colors group"
-                  >
-                    <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center shrink-0">
-                      <FileText className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-mono text-sm font-medium truncate">{item.fileName}</p>
-                      <p className="font-mono text-xs text-muted-foreground uppercase">{item.fileType.split("/")[1] || "document"}</p>
-                    </div>
-                    <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {displayedProject.tags && displayedProject.tags.length > 0 && (
-            <section>
-              <h2 className="text-xl font-bold font-mono tracking-tight mb-6 uppercase border-b border-border pb-2 text-primary">{t("detail.technologies")}</h2>
-              <div className="flex flex-wrap gap-3">
-                {displayedProject.tags.map(tag => (
-                  <span key={tag} className="flex items-center gap-1.5 px-3 py-1 bg-secondary text-secondary-foreground font-mono text-sm rounded border border-border/50" data-testid={`badge-detail-tag-${tag}`}>
-                    <Tag className="w-3 h-3 text-muted-foreground" />
-                    {tag}
-                  </span>
                 ))}
               </div>
             </section>
@@ -373,6 +346,34 @@ export default function ProjectDetail() {
               </Button>
             )}
           </div>
+
+          {docMedia.length > 0 && (
+            <section className="p-6 rounded-xl bg-card border border-border/50">
+              <h2 className="text-sm font-bold font-mono tracking-tight mb-4 uppercase border-b border-border pb-2 text-primary">
+                {t("detail.documents")}
+              </h2>
+              <div className="flex flex-col gap-3">
+                {docMedia.map((item) => (
+                  <a
+                    key={item.id}
+                    href={`/api/storage${item.objectPath}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-background/50 hover:border-primary/50 hover:bg-secondary/30 transition-colors group"
+                  >
+                    <div className="w-9 h-9 rounded bg-primary/10 flex items-center justify-center shrink-0">
+                      <FileText className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-mono text-xs font-medium truncate">{item.fileName}</p>
+                      <p className="font-mono text-[10px] text-muted-foreground uppercase">{item.fileType.split("/")[1] || "document"}</p>
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
         </aside>
       </div>
     </article>

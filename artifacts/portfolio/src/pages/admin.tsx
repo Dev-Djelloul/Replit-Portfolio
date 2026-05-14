@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Trash2, Upload, FileText, Loader2, Lock, Eye, EyeOff, ChevronDown, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { sortProjectsByLatest } from "@/data/projects";
+import { sortProjectsByProjectNumber } from "@/data/projects";
 
 const ADMIN_PASSWORD = "djelloul2024";
 const documentExtensions = new Set(["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"]);
@@ -224,7 +224,7 @@ export default function Admin() {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
   const { data: projects = [], isLoading } = useListProjects({}, { query: { enabled: authenticated, queryKey: getListProjectsQueryKey({}) } });
-  const sortedProjects = sortProjectsByLatest(projects);
+  const sortedProjects = sortProjectsByProjectNumber(projects);
 
   const handleLogin = () => {
     if (password.trim() === ADMIN_PASSWORD) {

@@ -149,6 +149,27 @@ export function getProjectNumber(project: Pick<Project, "id" | "title">): number
   return numbers.length > 0 ? Math.max(...numbers) : null;
 }
 
+export function getProjectDisplayTitle(project: Pick<Project, "title">): string {
+  return project.title
+    .replace(/^Projets?\s*(?:n[°º]\s*)?\d+(?:\s*(?:&|et|\/|-)\s*\d+)*\s*[-–—:]\s*/i, "")
+    .trim();
+}
+
+export function sortProjectsByProjectNumber(projects: Project[]): Project[] {
+  return [...projects].sort((a, b) => {
+    const aNumber = getProjectNumber(a);
+    const bNumber = getProjectNumber(b);
+
+    if (aNumber !== null || bNumber !== null) {
+      return (aNumber ?? Number.MAX_SAFE_INTEGER) - (bNumber ?? Number.MAX_SAFE_INTEGER);
+    }
+
+    const aTime = new Date(a.createdAt ?? a.updatedAt).getTime();
+    const bTime = new Date(b.createdAt ?? b.updatedAt).getTime();
+    return aTime - bTime || a.title.localeCompare(b.title);
+  });
+}
+
 export function sortProjectsByLatest(projects: Project[]): Project[] {
   return [...projects].sort((a, b) => {
     const aNumber = getProjectNumber(a);
